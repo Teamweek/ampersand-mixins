@@ -6,9 +6,14 @@ var isArray = require('lodash.isArray');
 var isUndefined = require('lodash.isUndefined');
 var result = require('lodash.result');
 
+var INVOKE_FUNCTIONS = ['initialize', 'render'];
+
 module.exports = function (target) {
   var mixins = [].slice.call(arguments, 1)
-    , mixinInitFunctions = [];
+  var mixinFunctions = {
+    initialize: [],
+    render: [],
+  };
 
   forEach(mixins, function (mixin) {
     if (mixin.dataTypes) {
@@ -55,22 +60,32 @@ module.exports = function (target) {
 
     assign(target.prototype, omit(mixin, omitFromAssign));
 
-    if (mixin.initialize) {
-      mixinInitFunctions.push(mixin.initialize);
-    }
+    INVOKE_FUNCTIONS.forEach(function (fnName) {
+      if (mixin[fnName]) {
+        mixinFunctions[fnName].push(mixin[fnName]);
+      }
+    });
   });
 
-  if (mixinInitFunctions.length > 0) {
-    var initialize = target.prototype.initialize;
-    target.prototype.initialize = function () {
-      var args = [].slice(arguments)
-        , self = this;
-      initialize.apply(this, args);
-      forEach(mixinInitFunctions, function (fn) {
-        fn.apply(self, args);
-      });
+  INVOKE_FUNCTIONS.forEach(function (fnName) {
+    var functions = mixinFunctions[fnName];
+    console.log(fnName, functions);
+    if (functions.length > 0) {
+      var realFn = target.prototype[fnName];
+      target.prototype[fnName] = function () {
+        var args = [].slice(arguments)
+          , self = this
+          , result;
+
+        result = realFn.apply(this, args);
+        forEach(functions, function (fn) {
+          fn.apply(self, args);
+        });
+
+        return result;
+      }
     }
-  }
+  });
 };
 
 /* This is copied from ampersand-state */
