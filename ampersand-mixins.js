@@ -63,11 +63,13 @@ module.exports = function (target) {
   if (mixinInitFunctions.length > 0) {
     var initialize = target.prototype.initialize;
     target.prototype.initialize = function () {
-      initialize.apply(this, [].slice(arguments));
+      var args = [].slice(arguments)
+        , self = this;
+      initialize.apply(this, args);
+      forEach(mixinInitFunctions, function (fn) {
+        fn.apply(self, args);
+      });
     }
-    forEach(mixinInitFunctions, function (fn) {
-      fn.apply(this, [].slice(arguments));
-    });
   }
 };
 
