@@ -7,55 +7,69 @@ var isUndefined = require('lodash.isUndefined');
 var result = require('lodash.result');
 
 module.exports = function (target) {
-  var mixins = [].slice.call(arguments, 1);
-  forEach(mixins, mergeMixin.bind(this, target));
-}
+  var mixins = [].slice.call(arguments, 1)
+    , mixinInitFunctions = [];
 
-function mergeMixin(target, mixin) {
-  if (mixin.dataTypes) {
-    forEach(mixin.dataTypes, function (def, name) {
-      target.prototype._dataTypes[name] = def;
-    });
-  }
-  if (mixin.props) {
-    forEach(mixin.props, function (def, name) {
-      createPropertyDefinition(target.prototype, name, def);
-    });
-  }
-  if (mixin.session) {
-    forEach(mixin.session, function (def, name) {
-      createPropertyDefinition(target.prototype, name, def, true);
-    });
-  }
-  if (mixin.derived) {
-    forEach(mixin.derived, function (def, name) {
-      createDerivedProperty(target.prototype, name, def);
-    });
-  }
-  if (mixin.collections) {
-    forEach(mixin.collections, function (constructor, name) {
-      target.prototype._collections[name] = constructor;
-    });
-  }
-  if (mixin.children) {
-    forEach(mixin.children, function (constructor, name) {
-      target.prototype._children[name] = constructor;
-    });
-  }
-  if (mixin.events) {
-    assign(target.prototype.events, mixin.events);
-  }
-  if (mixin.bindings) { // TODO: Make it work with arrays
-    assign(target.prototype.bindings, mixin.bindings);
-  }
+  forEach(mixins, function (mixin) {
+    if (mixin.dataTypes) {
+      forEach(mixin.dataTypes, function (def, name) {
+        target.prototype._dataTypes[name] = def;
+      });
+    }
+    if (mixin.props) {
+      forEach(mixin.props, function (def, name) {
+        createPropertyDefinition(target.prototype, name, def);
+      });
+    }
+    if (mixin.session) {
+      forEach(mixin.session, function (def, name) {
+        createPropertyDefinition(target.prototype, name, def, true);
+      });
+    }
+    if (mixin.derived) {
+      forEach(mixin.derived, function (def, name) {
+        createDerivedProperty(target.prototype, name, def);
+      });
+    }
+    if (mixin.collections) {
+      forEach(mixin.collections, function (constructor, name) {
+        target.prototype._collections[name] = constructor;
+      });
+    }
+    if (mixin.children) {
+      forEach(mixin.children, function (constructor, name) {
+        target.prototype._children[name] = constructor;
+      });
+    }
+    if (mixin.events) {
+      assign(target.prototype.events, mixin.events);
+    }
+    if (mixin.bindings) { // TODO: Make it work with arrays
+      assign(target.prototype.bindings, mixin.bindings);
+    }
 
-  var omitFromAssign = [
-    'dataTypes', 'props', 'session', 'derived',
-    'collections', 'children', 'events', 'bindings'
-  ];
+    var omitFromAssign = [
+      'dataTypes', 'props', 'session', 'derived', 'collections', 'children',
+      'events', 'bindings', 'initialize'
+    ];
 
-  assign(target.prototype, omit(mixin, omitFromAssign));
-}
+    assign(target.prototype, omit(mixin, omitFromAssign));
+
+    if (mixin.initialize) {
+      mixinInitFunctions.push(mixin.initialize);
+    }
+  });
+
+  if (mixinInitFunctions.length > 0) {
+    var initialize = target.prototype.initialize;
+    target.prototype.initialize = function () {
+      initialize.apply(this, [].slice(arguments));
+    }
+    forEach(mixinInitFunctions, function (fn) {
+      fn.apply(this, [].slice(arguments));
+    });
+  }
+};
 
 /* This is copied from ampersand-state */
 
