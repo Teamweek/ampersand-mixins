@@ -1,0 +1,20 @@
+{
+  "name": "ampersand-mixins",
+  "version": "0.1.0",
+  "description": "",
+  "main": "ampersand-mixins.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.assign": "^3.2.0",
+    "lodash.foreach": "^3.0.3",
+    "lodash.isarray": "^3.0.4",
+    "lodash.isstring": "^3.0.1",
+    "lodash.isundefined": "^3.0.1",
+    "lodash.omit": "^3.1.0",
+    "lodash.result": "^3.1.2"
+  }
+}
