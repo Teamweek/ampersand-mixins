@@ -14,9 +14,36 @@ npm install ampersand-mixins
 
 ## Usage
 
+### mixins(target, mixins...)
+
 ```javascript
 var mixins = require('ampersand-mixins');
 
-var SomeView = View.extend({/*....*/});
-mixins(SomeView, mixin1, mixin2, mixin3);
+var SomeView = View.extend({
+  props: {
+    foo: 'string',
+  },
+  events: {
+    'click button': 'clickButton',
+  },
+);
+
+var mixin1 = {
+  props: {
+    bar: 'boolean',
+  },
+  events: {
+    'click a': 'clickAnchor',
+  },
+  clickButton: function () {}
+};
+
+var mixin2 = {
+  props: {
+    foobar: 'state',
+  },
+  clickAnchor: function () {}
+};
+
+mixins(SomeView, mixin1, mixin2);
 ```
