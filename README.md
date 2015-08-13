@@ -14,7 +14,7 @@ npm install ampersand-mixins
 
 ## Usage
 
-### mixins(target, mixins...)
+### mixins(target, [mixins], options)
 
 ```javascript
 var mixins = require('ampersand-mixins');
@@ -45,5 +45,5 @@ var mixin2 = {
   clickAnchor: function () {}
 };
 
-mixins(SomeView, mixin1, mixin2);
+mixins(SomeView, [mixin1, mixin2]);
 ```

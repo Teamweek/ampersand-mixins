@@ -6,14 +6,24 @@ var isArray = require('lodash.isArray');
 var isUndefined = require('lodash.isUndefined');
 var result = require('lodash.result');
 
-var INVOKE_FUNCTIONS = ['initialize', 'render'];
+module.exports = function (target, mixins, options) {
+  options = assign({
+    invoke: []
+  }, options);
 
-module.exports = function (target) {
-  var mixins = [].slice.call(arguments, 1)
-  var mixinFunctions = {
-    initialize: [],
-    render: [],
-  };
+  var mixinFunctions = {};
+
+  forEach(options.invoke, function (fnName) {
+    mixinFunctions[fnName] = [];
+  });
+
+  var omitFromAssign = [
+    'dataTypes', 'props', 'session', 'derived', 'collections', 'children',
+    'events'
+  ].concat(options.invoke);
+
+  target.prototype.events = target.prototype.events || {};
+  target.prototype.bindings = target.prototype.bindings || {};
 
   forEach(mixins, function (mixin) {
     if (mixin.dataTypes) {
@@ -53,21 +63,17 @@ module.exports = function (target) {
       assign(target.prototype.bindings, mixin.bindings);
     }
 
-    var omitFromAssign = [
-      'dataTypes', 'props', 'session', 'derived', 'collections', 'children',
-      'events', 'bindings', 'initialize', 'render'
-    ];
-
     assign(target.prototype, omit(mixin, omitFromAssign));
 
-    INVOKE_FUNCTIONS.forEach(function (fnName) {
-      if (mixin[fnName]) {
-        mixinFunctions[fnName].push(mixin[fnName]);
+    forEach(options.invoke, function (fnName) {
+      var fn = mixin[fnName]
+      if (fn) {
+        mixinFunctions[fnName].push(fn);
       }
     });
   });
 
-  INVOKE_FUNCTIONS.forEach(function (fnName) {
+  forEach(options.invoke, function (fnName) {
     var functions = mixinFunctions[fnName];
     if (functions.length > 0) {
       var realFn = target.prototype[fnName];
@@ -76,7 +82,10 @@ module.exports = function (target) {
           , self = this
           , result;
 
-        result = realFn.apply(this, args);
+        if (realFn) {
+          result = realFn.apply(this, args);
+        }
+
         forEach(functions, function (fn) {
           fn.apply(self, args);
         });
