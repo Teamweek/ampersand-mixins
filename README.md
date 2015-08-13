@@ -1,10 +1,10 @@
 # Ampersand-mixins
 
-Ampersand-mixins allows you to mix in multiple mixins while merging all of the magic AmpersandJS properties.
+Use Ampersand-mixins to mix multiple mixins into a single Ampersand object. Ampersand-mixins merges all Ampersand specific properties such as props, events, bindings, etc.
 
-AmpersandJS provides an `extend` function for most of its modules. It offers amazing functionality like automatic props merging and etc.
+Ampersand provides an extend function for most of its modules. It offers functionality like automatic props merging and etc.
 
-One of the shortcomings of this is approach that it makes mixins more complicated. You can extend mixins like this `State.extend(parent, mixin1, mixin2, {})` however it does not merge props, derived and etc. This is where Ampersand-mixins comes to help.
+One of the shortcomings of this approach is that it allows to extend only one object. Ampersand.extend also allows for mixins but it doesn't merge any of their properties. This is where Ampersand-mixins comes to help.
 
 ## Install
 
