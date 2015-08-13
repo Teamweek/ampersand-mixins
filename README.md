@@ -47,3 +47,30 @@ var mixin2 = {
 
 mixins(SomeView, [mixin1, mixin2]);
 ```
+### Options
+#### Invoke
+An array of function names that define functions that will be called on each mixin (and the base object) separately. Useful for binding mixin specific listeners in the initialize function. Also works with the render function or any other custom functions. Only invokes functions that exist and doesn't fail if the base object or any of the mixins don't share the same functions.
+```javascript
+var mixins = require('ampersand-mixins');
+
+var BaseView = View.extend({
+  initialize: function () { console.log('base'); }
+);
+
+var mixin1 = {
+  initialize: function () { console.log('mixin1'); }
+};
+
+var mixin2 = {
+  initialize: function () { console.log('mixin2'); }
+};
+
+mixins(BaseView, [mixin1, mixin2]);
+var base = new BaseView();
+/* Prints out:
+ * base
+ * mixin1
+ * mixin2
+ */
+```
+
