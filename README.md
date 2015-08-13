@@ -65,7 +65,9 @@ var mixin2 = {
   initialize: function () { console.log('mixin2'); }
 };
 
-mixins(BaseView, [mixin1, mixin2]);
+mixins(BaseView, [mixin1, mixin2], {
+  invoke: ['initialize']
+});
 var base = new BaseView();
 /* Prints out:
  * base
