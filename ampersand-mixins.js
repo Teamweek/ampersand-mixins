@@ -55,7 +55,7 @@ module.exports = function (target) {
 
     var omitFromAssign = [
       'dataTypes', 'props', 'session', 'derived', 'collections', 'children',
-      'events', 'bindings', 'initialize'
+      'events', 'bindings', 'initialize', 'render'
     ];
 
     assign(target.prototype, omit(mixin, omitFromAssign));
@@ -69,7 +69,6 @@ module.exports = function (target) {
 
   INVOKE_FUNCTIONS.forEach(function (fnName) {
     var functions = mixinFunctions[fnName];
-    console.log(fnName, functions);
     if (functions.length > 0) {
       var realFn = target.prototype[fnName];
       target.prototype[fnName] = function () {
