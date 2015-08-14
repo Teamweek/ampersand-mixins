@@ -1,9 +1,9 @@
-var forEach = require('lodash.forEach');
+var forEach = require('lodash.foreach');
 var assign = require('lodash.assign');
 var omit = require('lodash.omit');
-var isString = require('lodash.isString');
-var isArray = require('lodash.isArray');
-var isUndefined = require('lodash.isUndefined');
+var isString = require('lodash.isstring');
+var isArray = require('lodash.isarray');
+var isUndefined = require('lodash.isundefined');
 var result = require('lodash.result');
 
 module.exports = function (target, mixins, options) {
