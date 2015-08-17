@@ -78,7 +78,7 @@ module.exports = function (target, mixins, options) {
     if (functions.length > 0) {
       var realFn = target.prototype[fnName];
       target.prototype[fnName] = function () {
-        var args = [].slice(arguments)
+        var args = [].slice.call(arguments)
           , self = this
           , result;
 
